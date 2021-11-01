@@ -8,23 +8,29 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+String ant = '';
 String next = 'https://rickandmortyapi.com/api/character/?page=1';
+int page = 1;
 Future<List<Data>> fetchData(String? name) async {
   final response;
+
+  // if (ant == next) return [];
   if (name == 'false') {
     response = await http.get(Uri.parse(next));
   } else {
     response = await http.get(
-        Uri.parse('https://rickandmortyapi.com/api/character/?name=${name}'));
+        Uri.parse('https://rickandmortyapi.com/api/character/?name=$name'));
   }
 
+
   if (response.statusCode == 200) {
+    ant = next;
     List jsonResponse = json.decode(response.body)['results'];
     next = name != 'false' ? next : json.decode(response.body)['info']['next'];
 
     return jsonResponse.map((data) => new Data.fromJson(data)).toList();
   } else {
-    throw Exception('Unexpected error occured!');
+    throw Exception('Unexpected error occurred!');
   }
 }
 
@@ -107,9 +113,7 @@ class _MyAppState extends State<HomeApp> {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent &&
           name == '') {
-        setState(() {
-          futureData = fetchData('false');
-        });
+        futureData = fetchData('false');
       }
     });
   }
@@ -134,7 +138,17 @@ class _MyAppState extends State<HomeApp> {
   }
 
   changeList(String nome) {
-    futureData = fetchData(nome);
+
+    if (nome == ''){
+      setState(() {
+        data = [];
+        futureData = fetchData('false');
+      });
+    }
+       setState(() {
+        data = [];
+        futureData = fetchData(nome);
+      });
   }
 
   @override
@@ -268,6 +282,7 @@ class _MyAppState extends State<HomeApp> {
             showModalBottomSheet<void>(
               context: context,
               builder: (BuildContext context) {
+                bool value = false;
                 return Container(
                   padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 30),
                   height: 400,
@@ -299,7 +314,7 @@ class _MyAppState extends State<HomeApp> {
                                 checkColor: Colors.white,
                                 fillColor:
                                     MaterialStateProperty.resolveWith(getColor),
-                                value: gender['male'],
+                                value:  gender['male'],
                                 onChanged: (bool? value) {
                                   onChangedFilter('gender', 'male', value);
                                 },
