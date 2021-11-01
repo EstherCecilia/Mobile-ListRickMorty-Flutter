@@ -1,4 +1,5 @@
 # ricky_and_morty
+![screen-capture](https://user-images.githubusercontent.com/29818932/139612518-8364f260-46a6-4e47-b8ac-b163585b8bd2.gif)
 
 A new Flutter project.
 
